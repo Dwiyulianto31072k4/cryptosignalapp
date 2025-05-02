@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './App.css';
 import CryptoSignalService from './components/CryptoSignalService';
 import CryptoSignalParser from './components/CryptoSignalParser';
-import { TrendingUp } from 'lucide-react';
+import { TrendingUp, Bell, Users } from 'lucide-react';
 
 function App() {
   console.log('App.js is rendering');
@@ -19,19 +19,35 @@ function App() {
             </h1>
           </div>
           
-          <div className="flex space-x-2">
-            <button
-              onClick={() => setActiveMode('service')}
-              className={`px-4 py-2 rounded-md ${activeMode === 'service' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300'}`}
-            >
-              Signal Service
-            </button>
-            <button
-              onClick={() => setActiveMode('parser')}
-              className={`px-4 py-2 rounded-md ${activeMode === 'parser' ? 'bg-purple-600 text-white' : 'bg-gray-700 text-gray-300'}`}
-            >
-              Signal Parser
-            </button>
+          <div className="flex items-center space-x-3">
+            <div className="flex space-x-2">
+              <button
+                onClick={() => setActiveMode('service')}
+                className={`px-4 py-2 rounded-md ${activeMode === 'service' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300'}`}
+              >
+                Signal Service
+              </button>
+              <button
+                onClick={() => setActiveMode('parser')}
+                className={`px-4 py-2 rounded-md ${activeMode === 'parser' ? 'bg-purple-600 text-white' : 'bg-gray-700 text-gray-300'}`}
+              >
+                Signal Parser
+              </button>
+            </div>
+            
+            <div className="hidden md:flex items-center space-x-3">
+              <button className="bg-transparent hover:bg-gray-700 px-3 py-2 rounded-md text-sm flex items-center">
+                <Bell size={16} className="mr-1" />
+                Alerts
+              </button>
+              <button className="bg-transparent hover:bg-gray-700 px-3 py-2 rounded-md text-sm flex items-center">
+                <Users size={16} className="mr-1" />
+                Community
+              </button>
+              <button className="bg-green-600 hover:bg-green-500 px-3 py-2 rounded-md text-sm">
+                Upgrade to Pro
+              </button>
+            </div>
           </div>
         </div>
       </header>
