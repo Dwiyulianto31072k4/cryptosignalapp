@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Clock, BarChart2, Award, Bell, Search, Users, Star, Zap, DollarSign } from 'lucide-react';
+import { Search, Star } from 'lucide-react';
 import SignalCard from './SignalCard';
+import StatsPanel from './StatsPanel'; // Import komponen StatsPanel
 import { premiumSignals, freeSignals } from '../data/sampleSignals';
 
 const CryptoSignalService = () => {
@@ -11,49 +12,11 @@ const CryptoSignalService = () => {
     <div className="bg-gray-900 text-white">
       {/* Main Content */}
       <main className="container mx-auto p-4">
-        {/* Hero Stats */}
-        <div className="bg-gray-800 rounded-lg p-6 border border-gray-700 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-gray-700 rounded-lg p-4 border border-gray-600">
-              <div className="flex justify-between items-center">
-                <h3 className="text-gray-400 text-sm">Total Signals</h3>
-                <BarChart2 className="text-blue-400" size={20} />
-              </div>
-              <p className="text-2xl font-bold mt-2">387</p>
-              <p className="text-green-400 text-sm mt-1">↑ 12% from last month</p>
-            </div>
-            
-            <div className="bg-gray-700 rounded-lg p-4 border border-gray-600">
-              <div className="flex justify-between items-center">
-                <h3 className="text-gray-400 text-sm">Success Rate</h3>
-                <Award className="text-yellow-400" size={20} />
-              </div>
-              <p className="text-2xl font-bold mt-2">82.5%</p>
-              <p className="text-green-400 text-sm mt-1">↑ 3.2% from last month</p>
-            </div>
-            
-            <div className="bg-gray-700 rounded-lg p-4 border border-gray-600">
-              <div className="flex justify-between items-center">
-                <h3 className="text-gray-400 text-sm">Active Signals</h3>
-                <Zap className="text-purple-400" size={20} />
-              </div>
-              <p className="text-2xl font-bold mt-2">14</p>
-              <p className="text-sm mt-1 text-gray-400">Updated 12 min ago</p>
-            </div>
-            
-            <div className="bg-gray-700 rounded-lg p-4 border border-gray-600">
-              <div className="flex justify-between items-center">
-                <h3 className="text-gray-400 text-sm">Average Profit</h3>
-                <DollarSign className="text-green-400" size={20} />
-              </div>
-              <p className="text-2xl font-bold mt-2">8.7%</p>
-              <p className="text-green-400 text-sm mt-1">↑ 1.3% from last month</p>
-            </div>
-          </div>
-        </div>
+        {/* Ganti Stats Cards dengan StatsPanel */}
+        <StatsPanel />
         
         {/* Tabs & Search */}
-        <div className="flex flex-col md:flex-row justify-between items-center mb-4">
+        <div className="flex flex-col md:flex-row justify-between items-center mb-4 mt-6">
           <div className="flex space-x-2 mb-4 md:mb-0">
             <button
               onClick={() => setActiveTab('premium')}
