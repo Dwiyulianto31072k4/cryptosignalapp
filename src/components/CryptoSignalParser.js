@@ -6,9 +6,12 @@ const CryptoSignalParser = () => {
   const [parsedSignals, setParsedSignals] = useState([]);
   const [error, setError] = useState('');
 
+  console.log('CryptoSignalParser component is rendering');
+
   // Parse the input text into structured data
   const parseSignalText = (text) => {
     setError('');
+    console.log('Parsing signal text:', text.substring(0, 50) + '...');
     
     if (!text.trim()) {
       setParsedSignals([]);
@@ -178,6 +181,7 @@ const CryptoSignalParser = () => {
       });
       
       setParsedSignals(parsedResults);
+      console.log('Parsed signals:', parsedResults.length);
     } catch (err) {
       console.error("Parsing error:", err);
       setError("Error parsing signal data. Please check the format and try again.");
