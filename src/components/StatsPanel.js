@@ -1,35 +1,156 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart2, Award, TrendingUp, Calendar, DollarSign, AlertTriangle, CheckCircle } from 'lucide-react';
+import axios from 'axios';
 
 const StatsPanel = () => {
   const [statsData, setStatsData] = useState({
     summary: {
-      rataRataWinrate: '84.0%',
-      totalTP: 541,
-      totalSL: 92,
-      totalSignals: 710,
-      overallWinrate: '85.5%',
-      completionRate: '89.2%'
+      rataRataWinrate: '0%',
+      totalTP: 0,
+      totalSL: 0,
+      totalSignals: 0,
+      overallWinrate: '0%',
+      completionRate: '0%'
     },
-    dailyData: [
-      { day: 24, date: '04/24-04/25', totalSignal: 153, tp: 131, sl: 8, winrate: '94.24%' },
-      { day: 25, date: '04/25-04/26', totalSignal: 152, tp: 118, sl: 20, winrate: '85.51%' },
-      { day: 26, date: '04/26-04/27', totalSignal: 75, tp: 51, sl: 21, winrate: '70.83%' },
-      { day: 27, date: '04/27-04/28', totalSignal: 76, tp: 55, sl: 17, winrate: '76.39%' },
-      { day: 28, date: '04/28-04/29', totalSignal: 76, tp: 56, sl: 12, winrate: '82.35%' },
-      { day: 29, date: '04/29-04/30', totalSignal: 64, tp: 51, sl: 11, winrate: '82.26%' },
-      { day: 30, date: '04/30-05/01', totalSignal: 114, tp: 79, sl: 3, winrate: '96.34%' }
-    ]
+    dailyData: []
   });
   
   const [timeFrame, setTimeFrame] = useState('week'); // 'week' atau 'month'
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   
-  // Di implementasi sebenarnya, Anda akan memanggil API untuk mengambil data dari Google Sheets
-  // Karena ini adalah UI mockup, kita menggunakan data statis
+  useEffect(() => {
+    fetchSheetData();
+  }, [timeFrame]);
+  
+  const fetchSheetData = async () => {
+    setLoading(true);
+    try {
+      // Spreadsheet ID dari URL
+      const spreadsheetId = '1g3XL1EllHoWV3jhmi7gT3at6MtCNTJBo8DQ1WyWhMEo';
+      
+      // Mengakses spreadsheet publik dalam format CSV
+      // Ini akan bekerja jika spreadsheet sudah dipublikasikan ke web
+      const publicSheetUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:csv`;
+      
+      const response = await axios.get(publicSheetUrl);
+      const csvData = response.data;
+      
+      // Parse CSV data
+      const parsedData = parseCSVData(csvData, timeFrame);
+      setStatsData(parsedData);
+    } catch (error) {
+      console.error('Error fetching sheet data:', error);
+      // Jika terjadi error, set data kosong
+      setStatsData({
+        summary: {
+          rataRataWinrate: 'N/A',
+          totalTP: 0,
+          totalSL: 0,
+          totalSignals: 0,
+          overallWinrate: 'N/A',
+          completionRate: 'N/A'
+        },
+        dailyData: []
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  // Function untuk parse data CSV
+  const parseCSVData = (csvString, timeFrame) => {
+    // Split CSV string menjadi baris
+    const rows = csvString.split('\n');
+    
+    // Parse header
+    const headers = rows[0].split(',').map(header => header.trim().replace(/"/g, ''));
+    
+    // Parse rows data
+    const data = [];
+    for (let i = 1; i < rows.length; i++) {
+      if (!rows[i].trim()) continue;
+      
+      const values = rows[i].split(',').map(value => value.trim().replace(/"/g, ''));
+      const rowData = {};
+      
+      headers.forEach((header, index) => {
+        rowData[header] = values[index];
+      });
+      
+      data.push(rowData);
+    }
+    
+    // Filter data berdasarkan timeFrame
+    const filteredData = data.filter(row => {
+      // Parse date dari format yang ada di spreadsheet
+      const rowDate = new Date(row.Date_display);
+      
+      if (timeFrame === 'week') {
+        // Filter untuk 7 hari terakhir
+        const weekAgo = new Date();
+        weekAgo.setDate(weekAgo.getDate() - 7);
+        return rowDate >= weekAgo;
+      } else {
+        // Filter untuk 30 hari terakhir
+        const monthAgo = new Date();
+        monthAgo.setDate(monthAgo.getDate() - 30);
+        return rowDate >= monthAgo;
+      }
+    });
+    
+    // Hitung summary dari data yang difilter
+    let totalSignals = 0;
+    let totalTP = 0;
+    let totalSL = 0;
+    let totalWinrate = 0;
+    
+    filteredData.forEach(row => {
+      totalSignals += parseInt(row.Total_Signal || 0);
+      totalTP += parseInt(row.TP || 0);
+      totalSL += parseInt(row.SL || 0);
+      totalWinrate += parseFloat(row.Winrate_pct?.replace('%', '') || 0);
+    });
+    
+    const avgWinrate = filteredData.length > 0 ? totalWinrate / filteredData.length : 0;
+    const overallWinrate = totalSignals > 0 ? (totalTP / totalSignals) * 100 : 0;
+    const completionRate = totalSignals > 0 ? ((totalTP + totalSL) / totalSignals) * 100 : 0;
+    
+    // Format data untuk tampilan di UI
+    const dailyData = filteredData.map(row => ({
+      day: row.day,
+      date: row.Date_display,
+      totalSignal: parseInt(row.Total_Signal || 0),
+      tp: parseInt(row.TP || 0),
+      sl: parseInt(row.SL || 0),
+      winrate: row.Winrate_pct || '0%'
+    }));
+    
+    // Ambil 7 hari terakhir saja untuk tabel
+    const recentDailyData = dailyData.slice(0, 7);
+    
+    return {
+      summary: {
+        rataRataWinrate: `${avgWinrate.toFixed(1)}%`,
+        totalTP,
+        totalSL,
+        totalSignals,
+        overallWinrate: `${overallWinrate.toFixed(1)}%`,
+        completionRate: `${completionRate.toFixed(1)}%`
+      },
+      dailyData: recentDailyData
+    };
+  };
   
   return (
     <div>
+      {/* Menampilkan indikator loading */}
+      {loading && (
+        <div className="flex justify-center items-center py-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+          <span className="ml-2 text-gray-400">Loading data...</span>
+        </div>
+      )}
+      
       {/* Tabs untuk memilih jangka waktu */}
       <div className="flex mb-4 bg-gray-800 rounded-lg p-2">
         <button
