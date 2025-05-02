@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TrendingUp, Clock, BarChart2, AlertTriangle, Award, Bell, Search, Users, Star, Zap, DollarSign } from 'lucide-react';
+import { Clock, BarChart2, Award, Bell, Search, Users, Star, Zap, DollarSign } from 'lucide-react';
 import SignalCard from './SignalCard';
 import { premiumSignals, freeSignals } from '../data/sampleSignals';
 
@@ -8,33 +8,7 @@ const CryptoSignalService = () => {
   const [activeTab, setActiveTab] = useState('premium');
   
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      {/* Header & Navigation */}
-      <header className="bg-gray-800 border-b border-gray-700 p-4">
-        <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
-          <div className="flex items-center mb-4 md:mb-0">
-            <TrendingUp className="text-blue-400 mr-2" size={28} />
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-              CryptoSignalPro
-            </h1>
-          </div>
-          
-          <div className="hidden md:flex items-center space-x-3">
-            <button className="bg-transparent hover:bg-gray-700 px-3 py-2 rounded-md text-sm flex items-center">
-              <Bell size={16} className="mr-1" />
-              Alerts
-            </button>
-            <button className="bg-transparent hover:bg-gray-700 px-3 py-2 rounded-md text-sm flex items-center">
-              <Users size={16} className="mr-1" />
-              Community
-            </button>
-            <button className="bg-green-600 hover:bg-green-500 px-3 py-2 rounded-md text-sm">
-              Upgrade to Pro
-            </button>
-          </div>
-        </div>
-      </header>
-      
+    <div className="bg-gray-900 text-white">
       {/* Main Content */}
       <main className="container mx-auto p-4">
         {/* Hero Stats */}
@@ -130,18 +104,6 @@ const CryptoSignalService = () => {
           </div>
         </div>
       </main>
-      
-      {/* Footer */}
-      <footer className="bg-gray-800 border-t border-gray-700 p-6 mt-8">
-        <div className="container mx-auto text-center">
-          <p className="text-gray-400 text-sm">
-            © 2025 CryptoSignalPro. All rights reserved. Trading signals are for informational purposes only.
-          </p>
-          <p className="text-gray-500 text-xs mt-2">
-            Past performance does not guarantee future results. Always do your own research.
-          </p>
-        </div>
-      </footer>
     </div>
   );
 };
